@@ -1,4 +1,4 @@
-# Valligator ![Build Status](https://travis-ci.org/konstantin-dzreev/valligator.svg?branch=master) ![Gem Version](https://badge.fury.io/rb/valligator.svg)
+# Valligator [![Build Status](https://travis-ci.org/konstantin-dzreev/valligator.svg?branch=master)](https://travis-ci.org/konstantin-dzreev/valligator) [![Gem Version](https://badge.fury.io/rb/valligator.svg)](https://rubygems.org/gems/valligator)
 
 ## Ruby objects validator
 
