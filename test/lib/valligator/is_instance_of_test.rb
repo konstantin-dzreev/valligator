@@ -21,8 +21,8 @@ class TestIsInstanceOf < Minitest::Test
 
 
     define_method 'test_that__%s__fails_on_wrong_argument_type' % method do
-      expected = "wrong argument type (arg#1 is a Fixnum instead of Class) at `testee#1.%s'" % method
-      err = assert_raises(ArgumentError) { v(:a).send(method, 1) }
+      expected = "wrong argument type (arg#1 is a NilClass instead of Class) at `testee#1.%s'" % method
+      err = assert_raises(ArgumentError) { v(:a).send(method, nil) }
       assert_equal expected, err.message
     end
   end

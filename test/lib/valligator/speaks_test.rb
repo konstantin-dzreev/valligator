@@ -17,8 +17,8 @@ class TestSpeaks < Minitest::Test
 
 
   def test_that__speaks__fails_on_wrong_argument_type
-    expected = "wrong argument type (arg#1 is a Fixnum instead of Symbol) at `testee#1.speaks'"
-    err = assert_raises(ArgumentError) { v(:a).speaks(1) }
+    expected = "wrong argument type (arg#1 is a NilClass instead of Symbol) at `testee#1.speaks'"
+    err = assert_raises(ArgumentError) { v(:a).speaks(nil) }
     assert_equal expected, err.message
   end
 
