@@ -1,4 +1,4 @@
-# Valligator ![Build Status](https://travis-ci.org/konstantin-dzreev/valligator.svg?branch=master)
+# Valligator ![Build Status](https://travis-ci.org/konstantin-dzreev/valligator.svg?branch=master) ![Gem Version](https://badge.fury.io/rb/valligator.svg)
 
 ## Ruby objects validator
 
@@ -27,35 +27,48 @@ gem install valligator
 
 ## Statements
 
-There are 3 validations (a.k.a. statements) that the Valligator supports:
+There are 3 positive and 3 negative validations (a.k.a. statements) that the Valligator supports:
 
-#### speaks
+
+#### speaks, does_not_speak
 
 ```
   testee.speaks(*methods)
   testee.does_not_speak(*methods)
+
+  # a method to be tested can be included into the validation name:
+  testee.speaks_<method>
+  testee.does_not_speak_<method>
 ```
-  - _methods_ are symbols
+  - _methods_ is a list of symbols
 
 The validations passes when testee responds to all (or none in negative case) the methods from the list.
 
-#### is_instance_of, is_a
+
+#### is_instance_of, is_not_instance_of (aliases: is_a, is_not_a)
+Aliases: **is_a** and **is_not_a**.
+
 ```
   testee.is_instance_of(*classes)
   testee.is_not_instance_of(*classes)
 ```
-  - _classes_ a list of ruby classes
+  - _classes_ is a list of ruby classes
 
 The validations passes when testee is an instance of any class (or not an instance of all the classes in negative case).
 
-**is_instance_of** and **is_not_instance_of** have aliases **is_a** and **is_not_a**
 
-#### asserts, is, has
+#### asserts, asserts_not
+Aliases: **is**, **has** and **is_not**, **does_not_have**. All of them are absolutely identical, you can use what ever sounds more grammatically correct: _is(:active?)_, _has(:apples)_, _asserts(:respond_to?, :foo)_, etc.
+
 ```
   testee.asserts(method, *method_args, &block)
   testee.asserts_not(method, *method_args, &block)
+
+  # a method to be tested can be included into the validation name:
+  testee.asserts_<method>(*method_args, &block)
+  testee.asserts_not_<method>(*method_args, &block)
 ```
-  - _method_ a method to be calld on testee
+  - _method_ a method to be called on testee
   - _method_args_ (optional) the method arguments
   - _block_ (optional) a block to be invoked in the context of the _method_ response
 
@@ -74,9 +87,8 @@ If it does not sound clear, then it is something like this:
   raise !!value.instance_eval { self == 10 }
 ```
 
-I use _instance_eval_ so that the _value_ could be assessed as _self_, and one would not need to access it using standard block params definition ({|value| value == 10 }).
+I use _instance_eval_ so that the _value_ could be assessed as _self_, and one would not need to access it using standard block params definition: {|value| value == 10 }.
 
-**asserts** has two aliases: **is** and **has**. The negative form **asserts_not** also has its own clones: **is_not**, **does_not_have**. All the methods are absolutely identical, just use what ever sounds more grammatically correct: _is(:active?)_, _has(:apples)_, _asserts(:respond_to?, :foo)_, etc.
 
 ## Method chaining
 
