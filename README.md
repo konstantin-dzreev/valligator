@@ -1,5 +1,4 @@
-# Valligator
-
+# Valligator ![Build Status](https://travis-ci.org/konstantin-dzreev/valligator.svg?branch=master)
 
 ## Ruby objects validator
 
