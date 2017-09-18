@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 
 
-class TestMethodMissing < Minitest::Test
+class TestErrors < Minitest::Test
   include Valligator::Helper
 
 

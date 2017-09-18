@@ -70,6 +70,8 @@ class Valligator
   #   Valligator.new('foo').is_instance_of(Integer, String) #=> OK
   #   Valligator.new('foo').is_instance_of(Integer, Array)  #=> Valligator::ValidationError
   #
+  # @see #is_a
+  #
   def is_instance_of(*classes)
     clone._is_instance_of(__method__, *classes)
   end
@@ -85,7 +87,23 @@ class Valligator
   #   Valligator.new('foo').is_not_instance_of(Integer, String) #=> Valligator::ValidationError
   #   Valligator.new('foo').is_not_instance_of(Integer, Array) #=> OK
   #
+  # @see #is_not_a
+  #
   def is_not_instance_of(*classes)
+    clone._is_instance_of(__method__, *classes)
+  end
+
+
+  # Is an alias for {#is_instance_of} method
+  #
+  def is_a(*classes)
+    clone._is_instance_of(__method__, *classes)
+  end
+
+
+  # Is an alias for {#is_not_instance_of} method
+  #
+  def is_not_a(*classes)
     clone._is_instance_of(__method__, *classes)
   end
 

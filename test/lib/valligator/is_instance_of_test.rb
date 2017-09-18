@@ -8,51 +8,65 @@ class TestIsInstanceOf < Minitest::Test
     Valligator::ValidationError
   end
 
+  positive_statements = [:is_instance_of, :is_a]
+  negative_statements = [:is_not_instance_of, :is_not_a]
+  all_statements = positive_statements + negative_statements
 
-  def test_that__is_instance_of__fails_on_wrong_number_of_arguments
-    expected = "wrong number of arguments (0 for 1..Infinity) at `testee#1.is_instance_of'"
-    err = assert_raises(ArgumentError) { v(:a).is_instance_of }
-    assert_equal expected, err.message
+  all_statements.each do |method|
+    define_method 'test_that__%s__fails_on_wrong_number_of_arguments' % method do
+      expected = "wrong number of arguments (0 for 1..Infinity) at `testee#1.%s'" % method
+      err = assert_raises(ArgumentError) { v(:a).send(method) }
+      assert_equal expected, err.message
+    end
+
+
+    define_method 'test_that__%s__fails_on_wrong_argument_type' % method do
+      expected = "wrong argument type (arg#1 is a Fixnum instead of Class) at `testee#1.%s'" % method
+      err = assert_raises(ArgumentError) { v(:a).send(method, 1) }
+      assert_equal expected, err.message
+    end
   end
 
 
-  def test_that__is_instance_of__fails_on_wrong_argument_type
-    expected = "wrong argument type (arg#1 is a Fixnum instead of Class) at `testee#1.is_instance_of'"
-    err = assert_raises(ArgumentError) { v(:a).is_instance_of(1) }
-    assert_equal expected, err.message
+  positive_statements.each do |method|
+    define_method 'test_that__%s__returns_an_instance_of_valligator' % method do
+      assert_instance_of Valligator, v(:a).send(method, Symbol)
+    end
+
+
+    define_method 'test_that__%s__passes_when_there_is_a_match' % method do
+      v(:a).send(method, Symbol)
+      v(:a).send(method, String, Symbol)
+      v(:a).send(method, Symbol).send(method, Symbol)
+    end
+
+
+    define_method 'test_that__%s__fails_when_there_is_no_match' % method do
+      assert_raises(error) { v(:a).send(method, String) }
+      assert_raises(error) { v(:a).send(method, String, Integer) }
+      assert_raises(error) { v(:a).send(method, Symbol).send(method, String) }
+    end
   end
 
 
-  def test_that__is_instance_of__returns_an_instance_of_valligator
-    assert_instance_of Valligator, v(:a).is_instance_of(Symbol)
-  end
+  negative_statements.each do |method|
+    define_method 'test_that__%s__returns_an_instance_of_valligator' % method do
+      assert_instance_of Valligator, v(:a).send(method, String)
+    end
 
 
-  def test_that__is_instance_of__passes_when_there_is_a_match
-    v(:a).is_instance_of(Symbol)
-    v(:a).is_instance_of(String, Symbol)
-    v(:a).is_instance_of(Symbol).is_instance_of(Symbol)
-  end
+    define_method 'test_that__%s__passes_when_there_is_no_match' % method do
+      v(:a).send(method, String)
+      v(:a).send(method, String, Integer)
+      v(:a).send(method, String).send(method, NilClass)
+    end
 
 
-  def test_that__is_instance_of__fails_when_there_is_no_match
-    assert_raises(error) { v(:a).is_instance_of(String) }
-    assert_raises(error) { v(:a).is_instance_of(String, Integer) }
-    assert_raises(error) { v(:a).is_instance_of(Symbol).is_instance_of(String) }
-  end
-
-
-  def test_that__is_not_instance_of__passes_when_there_is_no_match
-    v(:a).is_not_instance_of(String)
-    v(:a).is_not_instance_of(String, Integer)
-    v(:a).is_not_instance_of(String).is_not_instance_of(NilClass)
-  end
-
-
-  def test_that__is_not_instance_of__fails_when_there_is_a_match
-    assert_raises(error) { v(:a).is_not_instance_of(Symbol) }
-    assert_raises(error) { v(:a).is_not_instance_of(String, Symbol) }
-    assert_raises(error) { v(:a).is_not_instance_of(String).is_not_instance_of(Symbol) }
+    define_method 'test_that__%s__fails_when_there_is_a_match' % method do
+      assert_raises(error) { v(:a).send(method, Symbol) }
+      assert_raises(error) { v(:a).send(method, String, Symbol) }
+      assert_raises(error) { v(:a).send(method, String).send(method, Symbol) }
+    end
   end
 
 end

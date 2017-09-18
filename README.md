@@ -40,7 +40,7 @@ There are 3 validations (a.k.a. statements) that the Valligator supports:
 
 The validations passes when testee responds to all (or none in negative case) the methods from the list.
 
-#### is_instance_of
+#### is_instance_of, is_a
 ```
   testee.is_instance_of(*classes)
   testee.is_not_instance_of(*classes)
@@ -49,7 +49,9 @@ The validations passes when testee responds to all (or none in negative case) th
 
 The validations passes when testee is an instance of any class (or not an instance of all the classes in negative case).
 
-#### asserts
+**is_instance_of** and **is_not_instance_of** have aliases **is_a** and **is_not_a**
+
+#### asserts, is, has
 ```
   testee.asserts(method, *method_args, &block)
   testee.asserts_not(method, *method_args, &block)
@@ -82,38 +84,37 @@ I use _instance_eval_ so that the _value_ could be assessed as _self_, and one w
 Each statement, if it does not fail, returns an instance of the Valligator, so that they can be chained:
 
 ```
-  testee.is_instance_of(String).is_not(:empty?).has(:size){self > 10}.speaks(:to_s)
+  testee.is_a(String).is_not(:empty?).has(:size){self > 10}.speaks(:to_s)
 ```
 
 ## Errors
 
 When validation fails a Valligator::ValidationError is raised. The error message contains the full path of the
-passed validations. If the validation above would fail on _is_instance_of_ statement the error message wold look like:
+passed validations. If the validation above would fail on _is_a_ statement the error message wold look like:
 
 ```
-Valligator::ValidationError: at testee#1.is_instance_of
+Valligator::ValidationError: at testee#1.is_a
 ```
 
-but if it would fail on _has_ then the erro would be
-
+but if it would fail on _has_ then the error would be
 
 ```
-Valligator::ValidationError: at testee#1.is_instance_of.is_not.has
+Valligator::ValidationError: at testee#1.is_a.is_not.has
 ```
 
 You can provide a testee name when you instantiate a Valligator instance, and the name will be used in the error message instead of 'testee#x'
 
 ```
 testee = Valligator.new('Very long string', 'Short', names: ['long', 'short'])
-testee.is_instance_of(String).has(:size){self > 10}
-  #=> Valligator::ValidationError: at `short.is_instance_of.has'
+testee.is_a(String).has(:size){self > 10}
+  #=> Valligator::ValidationError: at `short.is_a.has'
 ```
 
 ## Examples
 
 Validate that testee is an instance of String
 ```
-Valligator.new('foo').is_instance_of(String) #=> OK
+Valligator.new('foo').is_a(String) #=> OK
 ```
 
 Validate that all testees respond to :to_s and :upcase methods
@@ -125,15 +126,15 @@ Valligator.new(*testees).speaks(:to_s, :upcase) #=> OK
 Validate that all testees have size == 3 and start with 'b' and they are Strings
 ```
 testees = ['boo', 'bar', :baz]
-Valligator.new(*testees).has(:size){self == 3}.has(:[], 0){self == 'b'}.is_instance_of(String)
-   #=> Valligator::ValidationError: at testee#3.has.has.is_instance_of'
+Valligator.new(*testees).has(:size){self == 3}.has(:[], 0){self == 'b'}.is_a(String)
+   #=> Valligator::ValidationError: at testee#3.has.has.is_a'
 ```
 
 Validate that all hash values are Integers <= 2
 ```
 h = { foo: 1, bar: 2, baz: 3 }
-Valligator.new(*h.values, names: h.keys).is_instance_of(Integer).asserts(:<= , 2)
-  #=> Valligator::ValidationError: at `baz.is_instance_of.asserts'
+Valligator.new(*h.values, names: h.keys).is_a(Integer).asserts(:<= , 2)
+  #=> Valligator::ValidationError: at `baz.is_a.asserts'
 ```
 
 ## More examples
@@ -208,11 +209,11 @@ Using the Valligator we can write all above as:
 require 'valligator'
 
 def charge!(payee, payment_gateway, order, currency, logger)
-  Valligator.new(user).is_instance_of(User, RemoteSystem).is_not(:blocked?).is(:confirmed?).has(:payment_method).asserts(:can_pay_in?, currency)
+  Valligator.new(user).is_a(User, RemoteSystem).is_not(:blocked?).is(:confirmed?).has(:payment_method).asserts(:can_pay_in?, currency)
   Valligator.new(payment_gateway).is(:active?).speaks(payee.payment_method)
   Valligator.new(order).is_not(:deleted?).has(:status) { self == :pending }.does_not_have(:order_items) { empty? }
   Valligator.new(*order.items).has(:currency){ self == currency }.has(:price) { self > 0 }
-  Valligator.new(logger).is_instance_of(IO).is_not(:closed?).has(:path) { self != 'dev/null'}
+  Valligator.new(logger).is_a(IO).is_not(:closed?).has(:path) { self != 'dev/null'}
   Valligator.new(currency).asserts(:==, :usd)
 
   charge(payee, payment_gateway, order, currency, logger)
@@ -227,11 +228,11 @@ require 'valligator'
 include Valligator::Helper
 
 def charge!(payee, payment_gateway, order, logger, currency)
-  v(user).is_instance_of(User, RemoteSystem).is_not_blocked?.is_confirmed?.has_payment_method.asserts_can_pay_in?(currency)
+  v(user).is_a(User, RemoteSystem).is_not_blocked?.is_confirmed?.has_payment_method.asserts_can_pay_in?(currency)
   v(payment_gateway).is_active?.speaks(payee.payment_method)
   v(order).is_not_deleted?.has_status{ self == :pending }.does_not_have_order_items { empty? }
   v(*order.items).has_currency{ self == :usd }.has_price { self > 0 }
-  v(logger).is_instance_of(IO).is_not_closed?.has_path { self != 'dev/null'}
+  v(logger).is_a(IO).is_not_closed?.has_path { self != 'dev/null'}
   v(currency).asserts(:==, :usd)
 
   charge(payee, payment_gateway, order, currency, logger)
