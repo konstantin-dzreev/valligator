@@ -19,7 +19,7 @@ class Valligator
   #
   # @example
   #   # validate that testee is an instance of String
-  #   Valligator.new('foo').is_instance_of(String) #=> OK
+  #   Valligator.new('foo').is_kind_of(String) #=> OK
   #
   # @example
   #   # validate that all testees respond to :to_s and :upcase methods
@@ -28,14 +28,14 @@ class Valligator
   # @example
   #   # validate that all testees have size == 3 and start with 'b' and they are Strings
   #   testees = ['boo', 'bar', :baz]
-  #   Valligator.new(*testees).has(:size){self == 3}.has(:[], 0){self == 'b'}.is_instance_of(String)
-  #     #=> Valligator::ValidationError: at `testee#3.has.has.is_instance_of'
+  #   Valligator.new(*testees).has(:size){self == 3}.has(:[], 0){self == 'b'}.is_kind_of(String)
+  #     #=> Valligator::ValidationError: at `testee#3.has.has.is_kind_of'
   #
   # @example
   #   # validate that all hash values are Integers <= 2
   #   h = { foo: 1, bar: 2, baz: 3 }
-  #   Valligator.new(*h.values, names: h.keys).is_instance_of(Integer).asserts(:<= , 2)
-  #     #=> Valligator::ValidationError: at `baz.is_instance_of.asserts'
+  #   Valligator.new(*h.values, names: h.keys).is_kind_of(Integer).asserts(:<= , 2)
+  #     #=> Valligator::ValidationError: at `baz.is_kind_of.asserts'
   #
   def initialize(*testees, names: nil)
     @testees = testees
@@ -67,13 +67,13 @@ class Valligator
   # @raise [Valligator::ValidationError]
   #
   # @example
-  #   Valligator.new('foo').is_instance_of(Integer, String) #=> OK
-  #   Valligator.new('foo').is_instance_of(Integer, Array)  #=> Valligator::ValidationError
+  #   Valligator.new('foo').is_kind_of(Integer, String) #=> OK
+  #   Valligator.new('foo').is_kind_of(Integer, Array)  #=> Valligator::ValidationError
   #
   # @see #is_a
   #
-  def is_instance_of(*classes)
-    clone._is_instance_of(__method__, *classes)
+  def is_kind_of(*classes)
+    clone._is_kind_of(__method__, *classes)
   end
 
 
@@ -84,27 +84,27 @@ class Valligator
   # @raise [Valligator::ValidationError]
   #
   # @example
-  #   Valligator.new('foo').is_not_instance_of(Integer, String) #=> Valligator::ValidationError
-  #   Valligator.new('foo').is_not_instance_of(Integer, Array) #=> OK
+  #   Valligator.new('foo').is_not_kind_of(Integer, String) #=> Valligator::ValidationError
+  #   Valligator.new('foo').is_not_kind_of(Integer, Array) #=> OK
   #
   # @see #is_not_a
   #
-  def is_not_instance_of(*classes)
-    clone._is_instance_of(__method__, *classes)
+  def is_not_kind_of(*classes)
+    clone._is_kind_of(__method__, *classes)
   end
 
 
-  # Is an alias for {#is_instance_of} method
+  # Is an alias for {#is_kind_of} method
   #
   def is_a(*classes)
-    clone._is_instance_of(__method__, *classes)
+    clone._is_kind_of(__method__, *classes)
   end
 
 
-  # Is an alias for {#is_not_instance_of} method
+  # Is an alias for {#is_not_kind_of} method
   #
   def is_not_a(*classes)
-    clone._is_instance_of(__method__, *classes)
+    clone._is_kind_of(__method__, *classes)
   end
 
 
@@ -256,7 +256,7 @@ class Valligator
   def error(exception, idx=0, msg=nil)
     msg += ' ' if msg
     raise(exception, "%sat `%s.%s'" % [msg, name_by_idx(idx), @stack.join('.')])
-  end
+  end  # Raises requested exception
 
 
   # Calls the given block for each testee and each item from the list.
@@ -348,9 +348,9 @@ class Valligator
 
 
   # @private
-  # @see #is_instance_of
+  # @see #is_kind_of
   #
-  def _is_instance_of(statement, *classes)
+  def _is_kind_of(statement, *classes)
     push(statement)
     equality = !statement[/not/]
 

@@ -45,12 +45,12 @@ There are 3 positive and 3 negative validations (a.k.a. statements) that the Val
 The validations passes when testee responds to all (or none in negative case) the methods from the list.
 
 
-#### is_instance_of, is_not_instance_of (aliases: is_a, is_not_a)
+#### is_kind_of, is_not_kind_of (aliases: is_a, is_not_a)
 Aliases: **is_a** and **is_not_a**.
 
 ```
-  testee.is_instance_of(*classes)
-  testee.is_not_instance_of(*classes)
+  testee.is_kind_of(*classes)
+  testee.is_not_kind_of(*classes)
 ```
   - _classes_ is a list of ruby classes
 
@@ -255,6 +255,11 @@ end
 ```
 rake test
 ```
+
+## API contract
+
+Until version 1.1.0 API contract is a subject to change
+
 
 ## License
 

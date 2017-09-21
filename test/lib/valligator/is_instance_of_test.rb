@@ -8,8 +8,8 @@ class TestIsInstanceOf < Minitest::Test
     Valligator::ValidationError
   end
 
-  positive_statements = [:is_instance_of, :is_a]
-  negative_statements = [:is_not_instance_of, :is_not_a]
+  positive_statements = [:is_kind_of, :is_a]
+  negative_statements = [:is_not_kind_of, :is_not_a]
   all_statements = positive_statements + negative_statements
 
   all_statements.each do |method|

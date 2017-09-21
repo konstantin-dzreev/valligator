@@ -25,12 +25,12 @@ class TestErrors < Minitest::Test
 
 
   def test_long_path
-    expected = "at `testee#1.speaks.asserts_not.has.is_instance_of.speaks'"
+    expected = "at `testee#1.speaks.asserts_not.has.is_kind_of.speaks'"
     err = assert_raises(error) do |variable|
       v(:foo).speaks(:to_s).\
               asserts_not(:empty?).\
               has(:size){self > 1}.\
-              is_instance_of(Symbol).\
+              is_kind_of(Symbol).\
               speaks(:it_dies_here).\
               asserts(:thould_not_reach_this)
     end
