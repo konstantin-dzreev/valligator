@@ -1,7 +1,7 @@
 require_relative 'valligator_helper'
 
 class Valligator
-  Error            = Class.new(StandardError)
+  Error           = Class.new(StandardError)
   ValidationError = Class.new(Error)
 
   INFINITY = 1/0.0
@@ -247,18 +247,6 @@ class Valligator
   end
 
 
-  # Raises requested exception
-  #
-  # @param [Class] exception
-  # @param option [Integer] idx  Testee index
-  # @param option [nil,String] msg Error explanation (when required)
-  #
-  def error(exception, idx=0, msg=nil)
-    msg += ' ' if msg
-    raise(exception, "%sat `%s.%s'" % [msg, name_by_idx(idx), @stack.join('.')])
-  end  # Raises requested exception
-
-
   # Calls the given block for each testee and each item from the list.
   #
   # @param optional list [Array]
@@ -292,8 +280,19 @@ class Valligator
 
 
   #------------------------------------------
-  # Validations
+  # Validations and Errors
   #------------------------------------------
+
+
+  # Raises ArgumentError exception
+  #
+  # @param [Class] exception
+  # @param [Integer] idx  Testee index
+  # @param [nil,String] msg Error explanation (when required)
+  #
+  def argument_error(exception, idx, msg)
+    raise(exception, "%s at `%s.%s'" % [msg, name_by_idx(idx), @stack.join('.')])
+  end
 
 
   # Validates number of arguments
@@ -307,7 +306,7 @@ class Valligator
     return if expected === args.size
 
     expected == expected.first if expected.is_a?(Range) && expected.size == 1
-    error(ArgumentError, 0, 'wrong number of arguments (%s for %s)' % [args.size, expected])
+    argument_error(ArgumentError, 0, 'wrong number of arguments (%s for %s)' % [args.size, expected])
   end
 
 
@@ -322,7 +321,7 @@ class Valligator
   def validate_argument_type(classes, arg, arg_idx)
     return if classes.any? { |klass| arg.is_a?(klass) }
     classes = classes.map { |klass| klass.inspect }.join(' or ')
-    error(ArgumentError, 0, 'wrong argument type (arg#%d is a %s instead of %s)' % [arg_idx, arg.class.name, classes])
+    argument_error(ArgumentError, 0, 'wrong argument type (arg#%d is a %s instead of %s)' % [arg_idx, arg.class.name, classes])
   end
 
 
@@ -338,8 +337,43 @@ class Valligator
     return if object.respond_to?(method)
     str = object.to_s
     str = str[0..-1] + '...' if str.size > 20
-    error(NoMethodError, idx, 'undefined method `%s\' for %s:%s' % [method, str, object.class.name])
+    argument_error(NoMethodError, idx, 'undefined method `%s\' for %s:%s' % [method, str, object.class.name])
   end
+
+
+  # Raises ValidationError exception
+  #
+  # @param [Class] exception
+  # @param option [Integer] idx  Testee index
+  # @param option [nil,String] msg Error explanation (when required)
+  #
+  def validation_error(idx, msg)
+    raise(ValidationError, "`%s': %s" % [name_by_idx(idx), msg])
+  end
+
+
+  def raise_is_kind_of_validation_error(equality, idx, classes)
+    verb = equality ? "should" : "should not"
+    validation_error(idx, "%s be %s" % [verb, @testees[idx].class.name])
+  end
+
+
+  def raise_speaks_validation_error(equality, idx, method)
+    verb = equality ? "should" : "should not"
+    validation_error(idx, "%s respond to method `%s'" % [verb, method])
+  end
+
+
+  def raise_asserts_validation_error(equality, idx, method, args, block, error)
+    msg = "method `%s' " % method
+    if error
+      msg += 'failed: %s: %s' % [error.class.name, error.message]
+    else
+      msg += 'returned %s value' % (equality ? 'falsy' : 'truthy')
+    end
+    validation_error(idx, msg)
+  end
+
 
 
   #------------------------------------------
@@ -360,7 +394,10 @@ class Valligator
     classes.each_with_index { |klass, idx| validate_argument_type([Class], klass, idx+1) }
 
     each(*classes)          { |testee, idx, klass|  matches[idx] = true if testee.is_a?(klass) }
-    matches.each_with_index { |match, idx| error(ValidationError, idx) if matches[idx] != equality }
+    matches.each_with_index do |match, idx|
+      next if matches[idx] == equality
+      raise_is_kind_of_validation_error(equality, idx, classes)
+    end
     self
   end
 
@@ -380,8 +417,7 @@ class Valligator
 
     each(*methods) do |testee, idx, method|
       next if testee.respond_to?(method) == equality
-
-      error(ValidationError, idx)
+      raise_speaks_validation_error(equality, idx, method)
     end
     self
   end
@@ -396,15 +432,13 @@ class Valligator
 
     each do |testee, idx|
       validate_respond_to(testee, method, idx)
-      response = testee.__send__(method, *args)
       begin
-        # Execute block in the context on the response so that one could retrieve it using self keyword.
+        response = testee.__send__(method, *args)
         response = response.instance_eval(&block) if block
-      rescue
-        # This error will have 'cause' set to the original exception raised in the block
-        error(ValidationError, idx)
+      rescue => e
+        response = !equality
       end
-      error(ValidationError, idx) if !!response != equality
+      raise_asserts_validation_error(equality, idx, method, args, block, e) if !!response != equality
     end
     self
   end

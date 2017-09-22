@@ -100,25 +100,19 @@ Each statement, if it does not fail, returns an instance of the Valligator, so t
 
 ## Errors
 
-When validation fails a Valligator::ValidationError is raised. The error message contains the full path of the
-passed validations. If the validation above would fail on _is_a_ statement the error message wold look like:
+When validation fails a Valligator::ValidationError is raised.
 
 ```
-Valligator::ValidationError: at testee#1.is_a
-```
-
-but if it would fail on _has_ then the error would be
-
-```
-Valligator::ValidationError: at testee#1.is_a.is_not.has
+Valligator.new(:foo).is_empty? #=>
+    Valligator::ValidationError: `testee#1': method `empty?' returned falsy value
 ```
 
 You can provide a testee name when you instantiate a Valligator instance, and the name will be used in the error message instead of 'testee#x'
 
 ```
 testee = Valligator.new('Very long string', 'Short', names: ['long', 'short'])
-testee.is_a(String).has(:size){self > 10}
-  #=> Valligator::ValidationError: at `short.is_a.has'
+testee.is_a(String).has(:size){self > 10} #=>
+  Valligator::ValidationError: `short': method `size' returned falsy value
 ```
 
 ## Examples
@@ -137,15 +131,15 @@ Valligator.new(*testees).speaks(:to_s, :upcase) #=> OK
 Validate that all testees have size == 3 and start with 'b' and they are Strings
 ```
 testees = ['boo', 'bar', :baz]
-Valligator.new(*testees).has(:size){self == 3}.has(:[], 0){self == 'b'}.is_a(String)
-   #=> Valligator::ValidationError: at testee#3.has.has.is_a'
+Valligator.new(*testees).has(:size){self == 3}.has(:[], 0){self == 'b'}.is_a(String) #=>
+  Valligator::ValidationError: `testee#3': should be Symbol
 ```
 
 Validate that all hash values are Integers <= 2
 ```
 h = { foo: 1, bar: 2, baz: 3 }
-Valligator.new(*h.values, names: h.keys).is_a(Integer).asserts(:<= , 2)
-  #=> Valligator::ValidationError: at `baz.is_a.asserts'
+Valligator.new(*h.values, names: h.keys).is_a(Integer).asserts(:<= , 2) #=>
+  Valligator::ValidationError: `baz': method `<=' returned falsy value
 ```
 
 ## More examples
