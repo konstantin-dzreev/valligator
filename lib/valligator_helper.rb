@@ -19,7 +19,7 @@ class Valligator
     # @return [Valligator]
     #
     def vh(hash)
-      Valligator.new(hash.values, names: hash.keys)
+      Valligator.new(*hash.values, names: hash.keys)
     end
 
   end

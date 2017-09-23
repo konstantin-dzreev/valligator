@@ -45,7 +45,7 @@ There are 3 positive and 3 negative validations (a.k.a. statements) that the Val
 The validations passes when testee responds to all (or none in negative case) the methods from the list.
 
 
-#### is_kind_of, is_not_kind_of (aliases: is_a, is_not_a)
+#### is_kind_of, is_not_kind_of
 Aliases: **is_a** and **is_not_a**.
 
 ```
