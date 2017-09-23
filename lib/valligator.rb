@@ -353,8 +353,7 @@ class Valligator
 
 
   def raise_is_kind_of_validation_error(equality, idx, classes)
-    verb = equality ? "should" : "should not"
-    validation_error(idx, "%s be %s" % [verb, @testees[idx].class.name])
+    validation_error(idx, "should not be %s" % [@testees[idx].class.name])
   end
 
 

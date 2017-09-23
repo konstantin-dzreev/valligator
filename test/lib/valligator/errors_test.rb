@@ -16,14 +16,14 @@ class TestErrors < Minitest::Test
 
 
   def test__is_kind_of__error__single
-    expected = "`testee#1': should be Symbol"
+    expected = "`testee#1': should not be Symbol"
     err = assert_raises(error) { v(:foo).is_kind_of(String) }
     assert_equal expected, err.message
   end
 
 
   def test__is_kind_of__error__multiple
-    expected = "`testee#1': should be Symbol"
+    expected = "`testee#1': should not be Symbol"
     err = assert_raises(error) { v(:foo).is_kind_of(String, Hash, Array) }
     assert_equal expected, err.message
   end
