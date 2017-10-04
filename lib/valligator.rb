@@ -1,6 +1,9 @@
+require 'pathname'
 require_relative 'valligator_helper'
 
 class Valligator
+  VERSION         = File.read(Pathname(__FILE__).dirname.join('../VERSION')).strip
+
   Error           = Class.new(StandardError)
   ValidationError = Class.new(Error)
 
