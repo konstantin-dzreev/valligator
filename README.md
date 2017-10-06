@@ -84,7 +84,7 @@ If it does not sound clear, then it is something like this:
   # is the same as:
 
   value = :foo.size
-  raise !!value.instance_eval { self == 10 }
+  raise if !value.instance_eval { self == 10 }
 ```
 
 I use _instance_eval_ so that the _value_ could be assessed as _self_, and one would not need to access it using standard block params definition: {|value| value == 10 }.
@@ -103,7 +103,7 @@ Each statement, if it does not fail, returns an instance of the Valligator, so t
 When validation fails a Valligator::ValidationError is raised.
 
 ```
-Valligator.new(:foo).is_empty? #=>
+Valligator.new(:foo).is(:empty?) #=>
     Valligator::ValidationError: `testee#1': method `empty?' returned falsy value
 ```
 
@@ -132,7 +132,7 @@ Validate that all testees have size == 3 and start with 'b' and they are Strings
 ```
 testees = ['boo', 'bar', :baz]
 Valligator.new(*testees).has(:size){self == 3}.has(:[], 0){self == 'b'}.is_a(String) #=>
-  Valligator::ValidationError: `testee#3': should be Symbol
+  Valligator::ValidationError: `testee#3': should not be Symbol
 ```
 
 Validate that all hash values are Integers <= 2
