@@ -78,7 +78,8 @@ class Valligator
   def is_kind_of(*classes)
     clone._is_kind_of(__method__, *classes)
   end
-
+  alias_method :is_a,  :is_kind_of
+  alias_method :is_an, :is_kind_of
 
   # Passes when the testee is not an instance of all of the classes
   #
@@ -95,20 +96,8 @@ class Valligator
   def is_not_kind_of(*classes)
     clone._is_kind_of(__method__, *classes)
   end
-
-
-  # Is an alias for {#is_kind_of} method
-  #
-  def is_a(*classes)
-    clone._is_kind_of(__method__, *classes)
-  end
-
-
-  # Is an alias for {#is_not_kind_of} method
-  #
-  def is_not_a(*classes)
-    clone._is_kind_of(__method__, *classes)
-  end
+  alias_method :is_not_a,  :is_not_kind_of
+  alias_method :is_not_an, :is_not_kind_of
 
 
   # Passes when the testee responds to all the methods
@@ -168,6 +157,8 @@ class Valligator
   def asserts(method, *args, &block)
     clone._asserts(__method__, method, *args, &block)
   end
+  alias_method :is,  :asserts
+  alias_method :has, :asserts
 
 
   # When no block given it passes if the testee, called with a given method and arguments, returns falsy value.
@@ -197,34 +188,8 @@ class Valligator
   def asserts_not(method, *args, &block)
     clone._asserts(__method__, method, *args, &block)
   end
-
-
-  # Is an alias for {#asserts} method
-  #
-  def is(method, *args, &block)
-    clone._asserts(__method__, method, *args, &block)
-  end
-
-
-  # Is an alias for {#asserts_not} method
-  #
-  def is_not(method, *args, &block)
-    clone._asserts(__method__, method, *args, &block)
-  end
-
-
-  # Is an alias for {#asserts} method
-  #
-  def has(method, *args, &block)
-    clone._asserts(__method__, method, *args, &block)
-  end
-
-
-  # Is an alias for {#asserts_not} method
-  #
-  def does_not_have(method, *args, &block)
-    clone._asserts(__method__, method, *args, &block)
-  end
+  alias_method :is_not,        :asserts_not
+  alias_method :does_not_have, :asserts_not
 
 
   protected

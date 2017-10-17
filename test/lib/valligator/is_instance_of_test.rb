@@ -8,27 +8,25 @@ class TestIsInstanceOf < Minitest::Test
     Valligator::ValidationError
   end
 
-  positive_statements = [:is_kind_of, :is_a]
-  negative_statements = [:is_not_kind_of, :is_not_a]
-  all_statements = positive_statements + negative_statements
+  positive_statements = [:is_kind_of, :is_a, :is_an]
+  negative_statements = [:is_not_kind_of, :is_not_a, :is_not_an]
 
-  all_statements.each do |method|
+
+  positive_statements.each do |method|
     define_method 'test_that__%s__fails_on_wrong_number_of_arguments' % method do
-      expected = "wrong number of arguments (0 for 1..Infinity) at `testee#1.%s'" % method
+      expected = "wrong number of arguments (0 for 1..Infinity) at `testee#1.is_kind_of'"
       err = assert_raises(ArgumentError) { v(:a).send(method) }
       assert_equal expected, err.message
     end
 
 
     define_method 'test_that__%s__fails_on_wrong_argument_type' % method do
-      expected = "wrong argument type (arg#1 is a NilClass instead of Class) at `testee#1.%s'" % method
+      expected = "wrong argument type (arg#1 is a NilClass instead of Class) at `testee#1.is_kind_of'"
       err = assert_raises(ArgumentError) { v(:a).send(method, nil) }
       assert_equal expected, err.message
     end
-  end
 
 
-  positive_statements.each do |method|
     define_method 'test_that__%s__returns_an_instance_of_valligator' % method do
       assert_instance_of Valligator, v(:a).send(method, Symbol)
     end
@@ -50,6 +48,19 @@ class TestIsInstanceOf < Minitest::Test
 
 
   negative_statements.each do |method|
+    define_method 'test_that__%s__fails_on_wrong_number_of_arguments' % method do
+      expected = "wrong number of arguments (0 for 1..Infinity) at `testee#1.is_not_kind_of'"
+      err = assert_raises(ArgumentError) { v(:a).send(method) }
+      assert_equal expected, err.message
+    end
+
+
+    define_method 'test_that__%s__fails_on_wrong_argument_type' % method do
+      expected = "wrong argument type (arg#1 is a NilClass instead of Class) at `testee#1.is_not_kind_of'"
+      err = assert_raises(ArgumentError) { v(:a).send(method, nil) }
+      assert_equal expected, err.message
+    end
+
     define_method 'test_that__%s__returns_an_instance_of_valligator' % method do
       assert_instance_of Valligator, v(:a).send(method, String)
     end

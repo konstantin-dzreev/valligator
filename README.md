@@ -46,7 +46,7 @@ The validations passes when testee responds to all (or none in negative case) th
 
 
 #### is_kind_of, is_not_kind_of
-Aliases: **is_a** and **is_not_a**.
+Aliases: **is_a**, **is_an** and **is_not_a**, **is_not_an**.
 
 ```
   testee.is_kind_of(*classes)
