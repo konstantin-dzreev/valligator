@@ -103,4 +103,14 @@ class TestErrors < Minitest::Test
     assert_equal expected, err.message
   end
 
+
+  #-------------------------------------
+  # #validation_stack
+  #-------------------------------------
+
+  def test__stack_attribute
+    err = assert_raises(error) { v(:foo).is_a(Symbol).is_not_empty?.speaks(:boom).has(:size) { self > 0 } }
+    assert 'is_kind_of.asserts_not.speaks', err.validation_stack
+  end
+
 end

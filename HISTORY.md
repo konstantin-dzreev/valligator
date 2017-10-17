@@ -1,4 +1,5 @@
 #### 1.0.4
+  - Valligator::ValidationError.validation_stack returns the exact position in validation method chain where the validation fails
   - **is_kind_of** got a new alias **is_an**
   - **is_not_kind_of** got a new alias **is_not_an**
   - all alias methods were replaced with ruby's built-in **alias_method**, so error messages will refer to the original  method name:

@@ -2,12 +2,20 @@ require 'pathname'
 require_relative 'valligator_helper'
 
 class Valligator
-  VERSION         = File.read(Pathname(__FILE__).dirname.join('../VERSION')).strip
-
-  Error           = Class.new(StandardError)
-  ValidationError = Class.new(Error)
-
+  VERSION  = File.read(Pathname(__FILE__).dirname.join('../VERSION')).strip
   INFINITY = 1/0.0
+  Error    = Class.new(StandardError)
+
+
+  class ValidationError < Error
+    attr_reader :validation_stack
+
+    def initialize(message, stack)
+      super(message)
+      @validation_stack = stack.join('.')
+    end
+  end
+
 
   attr_reader :testees
   attr_reader :names
@@ -316,7 +324,7 @@ class Valligator
   # @param option [nil,String] msg Error explanation (when required)
   #
   def validation_error(idx, msg)
-    raise(ValidationError, "`%s': %s" % [name_by_idx(idx), msg])
+    raise ValidationError.new("`%s': %s" % [name_by_idx(idx), msg], self.stack)
   end
 
 

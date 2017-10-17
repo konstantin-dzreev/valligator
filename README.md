@@ -115,6 +115,19 @@ testee.is_a(String).has(:size){self > 10} #=>
   Valligator::ValidationError: `short': method `size' returned falsy value
 ```
 
+If there was a chain of validations, you can get the exact position of the one that failed:
+
+```
+testee = Valligator.new(:foo1)
+begin
+  # it should die on :boom
+  testee.is_kind_of(Symbol).asserts_not(:empty?).speaks(:boom).has(:to_s){ self == 'foo' }
+rescue => e
+  puts e.validation_stack  #=> "is_kind_of.asserts_not.speaks"
+end
+
+```
+
 ## Examples
 
 Validate that testee is an instance of String
