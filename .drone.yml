@@ -3,7 +3,6 @@ kind: pipeline
 type: kubernetes
 name: default
 
-
 steps:
 - name: test
   image: ruby:2.5
