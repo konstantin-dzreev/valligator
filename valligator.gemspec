@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.homepage              = 'https://github.com/konstantin-dzreev/valligator'
   spec.files                 = Dir['README.md', 'VERSION', 'HISTORY.md', 'Gemfile', 'Rakefile', '{lib,test}/**/*']
   spec.require_paths         = 'lib'
-  spec.required_ruby_version = '~> 2.0'
+  spec.required_ruby_version = '>= 2'
 
   spec.add_dependency 'minitest'
 end

@@ -1,3 +1,9 @@
+#### 1.0.6
+  - It should work fine with ruby 3
+
+#### 1.0.5
+  - Do not use minitest/reporters
+
 #### 1.0.4
   - Valligator::ValidationError.validation_stack returns the exact position in validation method chain where the validation fails
   - **is_kind_of** got a new alias **is_an**
